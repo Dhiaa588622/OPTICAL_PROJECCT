@@ -1,0 +1,104 @@
+erDiagram
+    companies ||--o{ branches : owns
+    companies ||--o{ sales_customers : has
+    branches ||--o{ sales_cash_sessions : opens
+    branches ||--o{ sales_quotations : issues
+    branches ||--o{ sales_orders : creates
+    branches ||--o{ sales_invoices : posts
+    branches ||--o{ sales_returns : processes
+    branches ||--o{ sales_payments : collects
+
+    users ||--o{ sales_cash_sessions : cashier
+    users ||--o{ sales_invoices : cashier
+
+    sales_customers ||--o{ sales_quotations : receives
+    sales_customers ||--o{ sales_orders : places
+    sales_customers ||--o{ sales_invoices : receives
+    sales_customers ||--o{ sales_returns : requests
+    sales_customers ||--o{ sales_credit_notes : owns
+
+    sales_cash_sessions ||--o{ sales_invoices : contains
+    sales_cash_sessions ||--o{ sales_payments : contains
+    sales_cash_sessions ||--o{ sales_returns : contains
+
+    sales_quotations ||--o{ sales_quotation_items : includes
+    sales_quotations ||--o{ sales_orders : converts_to
+    sales_orders ||--o{ sales_order_items : includes
+    sales_orders ||--o{ sales_invoices : invoices
+    sales_orders ||--o{ sales_payments : deposits
+
+    sales_invoices ||--o{ sales_invoice_items : includes
+    sales_invoices ||--o{ sales_payments : paid_by
+    sales_invoices ||--o{ sales_receipts : prints
+    sales_invoices ||--o{ sales_returns : returned_by
+
+    sales_returns ||--o{ sales_return_items : includes
+    sales_returns ||--o{ sales_credit_notes : creates
+    sales_credit_notes ||--o{ sales_credit_note_items : includes
+
+    products ||--o{ sales_quotation_items : quoted
+    products ||--o{ sales_order_items : ordered
+    products ||--o{ sales_invoice_items : sold
+    products ||--o{ sales_return_items : returned
+    products ||--o{ inventory_stock_levels : stocked
+    products ||--o{ inventory_stock_movements : moves
+    products ||--o{ inventory_reservations : reserved
+
+    inventory_locations ||--o{ sales_invoice_items : fulfilled_from
+    inventory_locations ||--o{ sales_return_items : returned_to
+    inventory_stock_levels ||..o{ sales_invoice_items : reduced_by
+    inventory_stock_levels ||..o{ sales_return_items : increased_by
+    inventory_reservations ||..o{ sales_orders : source
+
+    sales_customers {
+        bigint id PK
+        bigint company_id FK
+        bigint patient_id
+        string name
+        string phone
+        boolean whatsapp_opt_in
+    }
+
+    sales_cash_sessions {
+        bigint id PK
+        bigint branch_id FK
+        bigint cashier_id FK
+        string session_number
+        decimal opening_cash
+        decimal expected_cash
+        decimal actual_cash
+        string status
+    }
+
+    sales_invoices {
+        bigint id PK
+        bigint branch_id FK
+        bigint customer_id FK
+        string invoice_number
+        string status
+        decimal grand_total
+        decimal paid_total
+        decimal balance_due
+        decimal gross_profit
+    }
+
+    sales_invoice_items {
+        bigint id PK
+        bigint sales_invoice_id FK
+        bigint product_id FK
+        decimal quantity
+        decimal stock_quantity
+        decimal unit_price
+        decimal tax_amount
+        decimal line_total
+    }
+
+    sales_payments {
+        bigint id PK
+        bigint sales_invoice_id FK
+        bigint sales_order_id FK
+        bigint sales_cash_session_id FK
+        string payment_method
+        string direction
+        decimal amount
+    }

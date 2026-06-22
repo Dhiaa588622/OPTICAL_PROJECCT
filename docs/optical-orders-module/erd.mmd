@@ -1,0 +1,111 @@
+erDiagram
+    companies ||--o{ optical_orders : owns
+    branches ||--o{ optical_orders : receives
+    patients ||--o{ optical_orders : places
+    patient_prescriptions ||--o{ optical_orders : sources
+    sales_customers ||--o{ optical_orders : links
+    sales_invoices ||--o{ optical_orders : closes
+    suppliers ||--o{ optical_orders : lab
+    users ||--o{ optical_orders : salesperson
+    products ||--o{ optical_orders : frame
+    optical_orders ||--o{ optical_order_items : contains
+    products ||--o{ optical_order_items : product
+    inventory_locations ||--o{ optical_order_items : picked_from
+    suppliers ||--o{ optical_order_items : supplied_by
+    optical_orders ||--o{ optical_order_status_events : tracks
+    users ||--o{ optical_order_status_events : changes
+    optical_orders ||--o{ optical_order_payments : collects
+    sales_payments ||--o{ optical_order_payments : posts_to_pos
+    optical_orders ||--o{ optical_order_documents : stores
+    users ||--o{ optical_order_documents : uploads
+    optical_orders ||--o{ optical_order_lab_incidents : records
+    products ||--o{ optical_order_lab_incidents : damaged_item
+    optical_orders ||--o{ inventory_reservations : reserves_frame
+    optical_orders ||--o{ inventory_stock_movements : posts_stock
+    patients ||--o{ patient_timeline_events : timeline
+    patients ||--o{ patient_whatsapp_messages : whatsapp
+
+    optical_orders {
+        bigint id PK
+        bigint company_id FK
+        bigint branch_id FK
+        bigint patient_id FK
+        bigint patient_prescription_id FK
+        bigint sales_customer_id FK
+        bigint sales_invoice_id FK
+        bigint salesperson_id FK
+        bigint lab_supplier_id FK
+        bigint frame_product_id FK
+        string order_number UK
+        string status
+        string priority
+        date order_date
+        date expected_delivery_date
+        datetime lab_sent_at
+        datetime ready_at
+        datetime delivered_at
+        decimal grand_total
+        decimal paid_amount
+        decimal outstanding_amount
+        string payment_status
+        boolean frame_stock_reserved
+        boolean stock_reduced
+    }
+
+    optical_order_items {
+        bigint id PK
+        bigint optical_order_id FK
+        bigint product_id FK
+        bigint inventory_location_id FK
+        bigint lab_supplier_id FK
+        string item_type
+        string description
+        decimal quantity
+        decimal reserved_quantity
+        decimal issued_quantity
+        decimal unit_price
+        decimal cost_price
+        decimal line_total
+        boolean is_custom
+        json metadata
+    }
+
+    optical_order_status_events {
+        bigint id PK
+        bigint optical_order_id FK
+        string from_status
+        string to_status
+        string event_title
+        datetime event_at
+        bigint changed_by FK
+    }
+
+    optical_order_payments {
+        bigint id PK
+        bigint optical_order_id FK
+        bigint sales_payment_id FK
+        string payment_number UK
+        string payment_method
+        decimal amount
+        datetime paid_at
+    }
+
+    optical_order_documents {
+        bigint id PK
+        bigint optical_order_id FK
+        string document_number UK
+        string document_type
+        string title
+        string file_path
+    }
+
+    optical_order_lab_incidents {
+        bigint id PK
+        bigint optical_order_id FK
+        bigint product_id FK
+        string incident_number UK
+        string incident_type
+        decimal quantity
+        string responsibility
+        boolean stock_written_off
+    }

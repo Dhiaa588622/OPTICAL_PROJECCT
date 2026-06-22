@@ -1,0 +1,141 @@
+erDiagram
+    PATIENTS ||--o{ WHATSAPP_CONVERSATIONS : "has"
+    PATIENTS ||--o{ PATIENT_WHATSAPP_MESSAGES : "message history"
+    PATIENTS ||--o{ WHATSAPP_CONSENT_EVENTS : "consent log"
+    PATIENTS ||--o{ PATIENT_TIMELINE_EVENTS : "timeline"
+    BRANCHES ||--o{ WHATSAPP_CONVERSATIONS : "branch inbox"
+    USERS ||--o{ WHATSAPP_CONVERSATIONS : "assigned staff"
+    USERS ||--o{ WHATSAPP_INTERNAL_NOTES : "writes"
+    WHATSAPP_CONVERSATIONS ||--o{ PATIENT_WHATSAPP_MESSAGES : "thread messages"
+    WHATSAPP_CONVERSATIONS ||--o{ WHATSAPP_INTERNAL_NOTES : "internal notes"
+    WHATSAPP_CONVERSATIONS ||--o{ WHATSAPP_MESSAGE_ATTACHMENTS : "media"
+    WHATSAPP_TEMPLATES ||--o{ PATIENT_WHATSAPP_MESSAGES : "template used"
+    WHATSAPP_TEMPLATES ||--o{ WHATSAPP_AUTOMATION_RULES : "sends"
+    WHATSAPP_AUTOMATION_RULES ||--o{ PATIENT_WHATSAPP_MESSAGES : "automation output"
+    PATIENT_WHATSAPP_MESSAGES ||--o{ WHATSAPP_MESSAGE_ATTACHMENTS : "attachments"
+    WHATSAPP_WEBHOOK_EVENTS }o--o{ PATIENT_WHATSAPP_MESSAGES : "provider ids"
+    COMPANIES ||--o{ WHATSAPP_SETTINGS : "provider settings"
+
+    PATIENTS {
+        bigint id PK
+        string patient_code
+        string full_name
+        string whatsapp_number
+        boolean whatsapp_opt_in
+        boolean whatsapp_opt_out
+        datetime whatsapp_consent_at
+        string whatsapp_content_policy
+    }
+
+    WHATSAPP_CONVERSATIONS {
+        bigint id PK
+        bigint company_id FK
+        bigint branch_id FK
+        bigint patient_id FK
+        bigint assigned_to FK
+        bigint escalated_to FK
+        string conversation_number
+        string whatsapp_number
+        string contact_name
+        string status
+        string priority
+        int unread_count
+        text last_message_preview
+        datetime last_message_at
+    }
+
+    PATIENT_WHATSAPP_MESSAGES {
+        bigint id PK
+        bigint patient_id FK
+        bigint whatsapp_conversation_id
+        bigint branch_id
+        bigint assigned_to
+        bigint whatsapp_template_id
+        bigint whatsapp_automation_rule_id
+        string direction
+        string whatsapp_number
+        text message
+        string message_type
+        string status
+        string provider_message_id
+        datetime sent_at
+        datetime delivered_at
+        datetime read_at
+        datetime failed_at
+        datetime reply_at
+    }
+
+    WHATSAPP_TEMPLATES {
+        bigint id PK
+        bigint company_id FK
+        string name
+        string slug
+        string category
+        string trigger_key
+        string provider_template_name
+        string language_code
+        text body
+        boolean send_sensitive_details
+        boolean is_active
+    }
+
+    WHATSAPP_AUTOMATION_RULES {
+        bigint id PK
+        bigint company_id FK
+        bigint branch_id FK
+        bigint whatsapp_template_id FK
+        string name
+        string trigger_key
+        string status
+        string timing
+        int offset_minutes
+        boolean requires_opt_in
+    }
+
+    WHATSAPP_CONSENT_EVENTS {
+        bigint id PK
+        bigint patient_id FK
+        string whatsapp_number
+        string consent_status
+        string source
+        string policy_version
+        datetime recorded_at
+    }
+
+    WHATSAPP_WEBHOOK_EVENTS {
+        bigint id PK
+        string event_uid
+        string event_type
+        string phone_number_id
+        string whatsapp_number
+        string provider_message_id
+        json payload
+        string status
+        datetime processed_at
+    }
+
+    WHATSAPP_MESSAGE_ATTACHMENTS {
+        bigint id PK
+        bigint patient_whatsapp_message_id
+        bigint whatsapp_conversation_id FK
+        string direction
+        string media_id
+        string storage_path
+        string mime_type
+        string status
+    }
+
+    WHATSAPP_SETTINGS {
+        bigint id PK
+        bigint company_id FK
+        string provider
+        string mode
+        string api_version
+        string phone_number_id
+        string business_account_id
+        string webhook_verify_token
+        text access_token_ciphertext
+        string content_policy
+        boolean auto_send_enabled
+        boolean media_allowed
+    }

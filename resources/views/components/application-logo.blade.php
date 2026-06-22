@@ -1,0 +1,1 @@
+<x-brand-logo {{ $attributes }} />

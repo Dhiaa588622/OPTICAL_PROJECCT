@@ -1,0 +1,17 @@
+@extends('documents.base')
+@section('document-title', $t('Purchase Order', 'أمر شراء').' '.$record->po_number)
+@section('document')
+<main class="document-page">
+    @include('documents.partials.watermark')
+    <div class="document-content">
+        @include('documents.partials.header')
+        <h1 class="doc-title">{{ $t('Purchase Order', 'أمر شراء') }}</h1>
+        <div class="meta-grid"><div class="meta-cell"><span class="meta-label">{{ $t('PO No.', 'رقم الأمر') }}</span><span class="meta-value">{{ $record->po_number }}</span></div><div class="meta-cell"><span class="meta-label">{{ $t('Order date', 'تاريخ الطلب') }}</span><span class="meta-value">{{ $record->ordered_on ?: $record->created_at }}</span></div><div class="meta-cell"><span class="meta-label">{{ $t('Expected', 'التاريخ المتوقع') }}</span><span class="meta-value">{{ $record->expected_on ?: '-' }}</span></div><div class="meta-cell"><span class="meta-label">{{ $t('Status', 'الحالة') }}</span><span class="meta-value">{{ str($record->status)->replace('_', ' ')->title() }}</span></div><div class="meta-cell wide"><span class="meta-label">{{ $t('Supplier', 'المورد') }}</span><span class="meta-value">{{ $record->supplier_name }}</span></div><div class="meta-cell"><span class="meta-label">{{ $t('Supplier phone', 'هاتف المورد') }}</span><span class="meta-value">{{ $record->supplier_phone ?: '-' }}</span></div><div class="meta-cell"><span class="meta-label">{{ $t('Supplier tax no.', 'الرقم الضريبي للمورد') }}</span><span class="meta-value">{{ $record->supplier_tax_number ?: '-' }}</span></div></div>
+        <table><thead><tr><th>#</th><th>{{ $t('SKU', 'الرمز') }}</th><th>{{ $t('Product', 'الصنف') }}</th><th>{{ $t('Quantity', 'الكمية') }}</th><th>{{ $t('Received', 'المستلم') }}</th><th>{{ $t('Unit cost', 'تكلفة الوحدة') }}</th><th>{{ $t('Tax rate', 'نسبة الضريبة') }}</th><th>{{ $t('Line total', 'الإجمالي') }}</th></tr></thead><tbody>@foreach($record->lines as $line)<tr><td>{{ $loop->iteration }}</td><td>{{ $line->sku }}</td><td>{{ $line->product_name }}</td><td>{{ number_format($line->ordered_quantity, 2) }}</td><td>{{ number_format($line->received_quantity, 2) }}</td><td class="numeric">{{ number_format($line->unit_cost, 2) }}</td><td class="numeric">{{ number_format($line->tax_rate, 2) }}%</td><td class="numeric">{{ number_format($line->line_total, 2) }}</td></tr>@endforeach</tbody></table>
+        <div class="totals"><div class="totals-row"><span>{{ $t('Subtotal', 'المجموع') }}</span><strong>{{ $branding['currency'] }} {{ number_format($record->subtotal, 2) }}</strong></div><div class="totals-row"><span>{{ $t('Tax', 'الضريبة') }}</span><strong>{{ $branding['currency'] }} {{ number_format($record->tax_total, 2) }}</strong></div><div class="totals-row grand"><span>{{ $t('Grand total', 'الإجمالي') }}</span><strong>{{ $branding['currency'] }} {{ number_format($record->grand_total, 2) }}</strong></div></div>
+        @if($record->notes)<div class="note-box"><strong>{{ $t('Notes', 'ملاحظات') }}:</strong> {{ $record->notes }}</div>@endif
+        <div class="signature-grid"><div class="signature">{{ $branding['prepared_by_ar'] }} / {{ $branding['prepared_by_en'] }}<br>{{ $record->prepared_by_name }}</div><div class="signature">{{ $branding['approved_by_ar'] }} / {{ $branding['approved_by_en'] }}<br>{{ $record->approved_by_name }}</div><div class="signature">{{ $t('Supplier', 'المورد') }}</div></div>
+        @include('documents.partials.footer')
+    </div>
+</main>
+@endsection

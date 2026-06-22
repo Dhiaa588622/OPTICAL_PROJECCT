@@ -1,0 +1,90 @@
+erDiagram
+    companies ||--o{ patients : owns
+    branches ||--o{ patient_appointments : schedules
+    branches ||--o{ patient_eye_exams : hosts
+    branches ||--o{ patient_prescriptions : issues
+    branches ||--o{ patient_documents : stores
+    branches ||--o{ patient_timeline_events : records
+
+    users ||--o{ patient_appointments : assigned_to
+    users ||--o{ patient_eye_exams : optometrist
+    users ||--o{ patient_prescriptions : optometrist
+    users ||--o{ patient_documents : uploaded_by
+    users ||--o{ patient_timeline_events : actor
+
+    patients ||--o{ patient_appointments : has
+    patients ||--o{ patient_eye_exams : has
+    patients ||--o{ patient_prescriptions : has
+    patients ||--o{ patient_documents : has
+    patients ||--o{ patient_whatsapp_messages : has
+    patients ||--o{ patient_timeline_events : has
+    patient_eye_exams ||--o{ patient_prescriptions : source
+
+    patients ||--o{ sales_customers : syncs_to
+    sales_customers ||--o{ sales_invoices : receives
+    sales_customers ||--o{ sales_payments : pays
+
+    patients {
+        bigint id PK
+        bigint company_id FK
+        string patient_code
+        string full_name
+        string gender
+        date date_of_birth
+        string phone
+        string whatsapp_number
+        string email
+        boolean is_active
+    }
+
+    patient_eye_exams {
+        bigint id PK
+        bigint patient_id FK
+        bigint branch_id FK
+        bigint optometrist_id FK
+        string exam_number
+        date exam_date
+        decimal right_sph
+        decimal right_cyl
+        int right_axis
+        decimal right_add
+        decimal right_pd
+        string right_va
+        decimal left_sph
+        decimal left_cyl
+        int left_axis
+        decimal left_add
+        decimal left_pd
+        string left_va
+        date next_visit_date
+    }
+
+    patient_prescriptions {
+        bigint id PK
+        bigint patient_id FK
+        bigint patient_eye_exam_id FK
+        string prescription_number
+        string status
+        date prescribed_on
+        datetime signed_at
+        datetime locked_at
+    }
+
+    patient_documents {
+        bigint id PK
+        bigint patient_id FK
+        string document_number
+        string document_type
+        string title
+        string file_path
+    }
+
+    patient_timeline_events {
+        bigint id PK
+        bigint patient_id FK
+        string event_type
+        string event_title
+        datetime event_at
+        string source_type
+        bigint source_id
+    }

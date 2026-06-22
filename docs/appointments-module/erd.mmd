@@ -1,0 +1,83 @@
+erDiagram
+    patients ||--o{ patient_appointments : books
+    branches ||--o{ patient_appointments : hosts
+    users ||--o{ patient_appointments : assigned_to
+    patient_appointments ||--o{ appointment_visits : creates
+    patient_appointments ||--o{ appointment_status_events : tracks
+    patient_appointments ||--o{ appointment_reminders : schedules
+    patients ||--o{ appointment_reminders : receives
+    patients ||--o{ patient_timeline_events : timeline
+    patients ||--o{ patient_whatsapp_messages : messages
+    patient_appointments ||--o{ patient_eye_exams : starts_exam_later
+
+    patient_appointments {
+        bigint id PK
+        bigint patient_id FK
+        bigint branch_id FK
+        bigint assigned_to FK
+        string appointment_number UK
+        datetime appointment_at
+        datetime appointment_end_at
+        string appointment_type
+        string status
+        string purpose
+        text visit_reason
+        int duration_minutes
+        datetime checked_in_at
+        datetime waiting_started_at
+        datetime exam_started_at
+        datetime completed_at
+        datetime cancelled_at
+        datetime no_show_at
+        datetime rescheduled_at
+        text cancellation_reason
+        text reschedule_reason
+        datetime confirmation_sent_at
+        datetime reminder_sent_at
+        datetime patient_confirmed_at
+        string patient_reply_status
+        bigint rescheduled_from_id
+        bigint created_by
+    }
+
+    appointment_visits {
+        bigint id PK
+        bigint patient_appointment_id FK
+        bigint patient_id FK
+        bigint branch_id FK
+        bigint optometrist_id FK
+        string visit_number UK
+        string status
+        datetime checked_in_at
+        datetime waiting_started_at
+        datetime exam_started_at
+        datetime completed_at
+        int waiting_minutes
+        text visit_reason
+        text notes
+    }
+
+    appointment_status_events {
+        bigint id PK
+        bigint patient_appointment_id FK
+        string from_status
+        string to_status
+        string event_title
+        text notes
+        datetime event_at
+        bigint changed_by FK
+    }
+
+    appointment_reminders {
+        bigint id PK
+        bigint patient_appointment_id FK
+        bigint patient_id FK
+        string trigger
+        string channel
+        datetime scheduled_for
+        datetime sent_at
+        string status
+        string whatsapp_number
+        text message
+        string provider_message_id
+    }

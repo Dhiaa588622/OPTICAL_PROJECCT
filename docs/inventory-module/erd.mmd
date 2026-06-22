@@ -1,0 +1,365 @@
+erDiagram
+    COMPANIES {
+        bigint id PK
+        string name
+        string currency
+    }
+
+    BRANCHES {
+        bigint id PK
+        bigint company_id FK
+        string code
+        string name
+    }
+
+    USERS {
+        bigint id PK
+        string name
+        string email
+    }
+
+    SUPPLIERS {
+        bigint id PK
+        bigint company_id FK
+        string name
+        string phone
+        boolean is_active
+    }
+
+    PRODUCT_CATEGORIES {
+        bigint id PK
+        bigint company_id FK
+        bigint parent_id FK
+        string name
+        string type
+    }
+
+    PRODUCTS {
+        bigint id PK
+        bigint company_id FK
+        bigint product_category_id FK
+        bigint supplier_id FK
+        string sku
+        string barcode
+        string type
+        string name
+        string brand
+        string model
+        string color
+        string size
+        decimal cost_price
+        decimal retail_price
+        string tax_type
+        decimal tax_rate
+        boolean track_serials
+        boolean is_active
+    }
+
+    INVENTORY_FRAME_DETAILS {
+        bigint id PK
+        bigint product_id FK
+        string frame_size
+        string bridge_size
+        string temple_length
+        string material
+        string gender_style
+        string rim_type
+        string shape
+    }
+
+    INVENTORY_LENS_DETAILS {
+        bigint id PK
+        bigint product_id FK
+        bigint lab_supplier_id FK
+        string lens_type
+        string material
+        string lens_index
+        string coating
+        string tint
+        decimal sphere_min
+        decimal sphere_max
+        decimal cylinder_min
+        decimal cylinder_max
+        boolean is_custom_order
+    }
+
+    INVENTORY_CONTACT_LENS_DETAILS {
+        bigint id PK
+        bigint product_id FK
+        decimal power
+        decimal base_curve
+        decimal diameter
+        string wear_schedule
+        integer pack_size
+    }
+
+    INVENTORY_PRODUCT_BARCODES {
+        bigint id PK
+        bigint product_id FK
+        string barcode
+        string barcode_type
+        boolean is_primary
+    }
+
+    INVENTORY_LOCATIONS {
+        bigint id PK
+        bigint branch_id FK
+        string code
+        string name
+        string type
+        boolean is_sellable
+        boolean is_active
+    }
+
+    INVENTORY_BATCHES {
+        bigint id PK
+        bigint product_id FK
+        bigint supplier_id FK
+        string lot_number
+        string batch_number
+        date expires_on
+        date received_on
+        decimal initial_quantity
+        decimal unit_cost
+    }
+
+    INVENTORY_SERIALS {
+        bigint id PK
+        bigint product_id FK
+        bigint branch_id FK
+        bigint inventory_batch_id FK
+        bigint inventory_location_id FK
+        string serial_number
+        string status
+    }
+
+    INVENTORY_STOCK_LEVELS {
+        bigint id PK
+        bigint product_id FK
+        bigint branch_id FK
+        bigint inventory_location_id FK
+        bigint inventory_batch_id FK
+        decimal qty_on_hand
+        decimal qty_reserved
+        decimal minimum_stock_level
+        decimal reorder_point
+        decimal average_cost
+    }
+
+    INVENTORY_STOCK_MOVEMENTS {
+        bigint id PK
+        bigint product_id FK
+        bigint branch_id FK
+        bigint inventory_location_id FK
+        bigint inventory_batch_id FK
+        bigint inventory_serial_id FK
+        bigint user_id FK
+        string movement_type
+        string direction
+        decimal quantity
+        decimal unit_cost
+        decimal balance_after
+        string reference_type
+        bigint reference_id
+        datetime occurred_at
+    }
+
+    INVENTORY_PURCHASE_ORDERS {
+        bigint id PK
+        bigint company_id FK
+        bigint branch_id FK
+        bigint supplier_id FK
+        string po_number
+        string status
+        date ordered_on
+        date expected_on
+        decimal grand_total
+    }
+
+    INVENTORY_PURCHASE_ORDER_LINES {
+        bigint id PK
+        bigint inventory_purchase_order_id FK
+        bigint product_id FK
+        decimal ordered_quantity
+        decimal received_quantity
+        decimal unit_cost
+        decimal line_total
+    }
+
+    INVENTORY_GOODS_RECEIPTS {
+        bigint id PK
+        bigint inventory_purchase_order_id FK
+        bigint branch_id FK
+        bigint supplier_id FK
+        string receipt_number
+        date received_on
+        string status
+    }
+
+    INVENTORY_GOODS_RECEIPT_LINES {
+        bigint id PK
+        bigint inventory_goods_receipt_id FK
+        bigint inventory_purchase_order_line_id FK
+        bigint product_id FK
+        bigint inventory_batch_id FK
+        decimal received_quantity
+        decimal accepted_quantity
+        decimal rejected_quantity
+        string lot_number
+        string batch_number
+        date expires_on
+    }
+
+    INVENTORY_SUPPLIER_RETURNS {
+        bigint id PK
+        bigint branch_id FK
+        bigint supplier_id FK
+        string return_number
+        string status
+        string reason
+    }
+
+    INVENTORY_SUPPLIER_RETURN_LINES {
+        bigint id PK
+        bigint inventory_supplier_return_id FK
+        bigint product_id FK
+        bigint inventory_batch_id FK
+        decimal quantity
+        decimal unit_cost
+        string condition
+    }
+
+    INVENTORY_ADJUSTMENTS {
+        bigint id PK
+        bigint branch_id FK
+        string adjustment_number
+        string reason
+        string status
+    }
+
+    INVENTORY_ADJUSTMENT_LINES {
+        bigint id PK
+        bigint inventory_adjustment_id FK
+        bigint product_id FK
+        bigint inventory_location_id FK
+        bigint inventory_batch_id FK
+        decimal system_quantity
+        decimal adjusted_quantity
+        decimal variance_quantity
+    }
+
+    INVENTORY_TRANSFERS {
+        bigint id PK
+        bigint from_branch_id FK
+        bigint to_branch_id FK
+        bigint from_location_id FK
+        bigint to_location_id FK
+        string transfer_number
+        string status
+    }
+
+    INVENTORY_TRANSFER_LINES {
+        bigint id PK
+        bigint inventory_transfer_id FK
+        bigint product_id FK
+        bigint inventory_batch_id FK
+        decimal requested_quantity
+        decimal shipped_quantity
+        decimal received_quantity
+    }
+
+    INVENTORY_STOCK_COUNTS {
+        bigint id PK
+        bigint branch_id FK
+        bigint inventory_location_id FK
+        string count_number
+        string status
+        date count_date
+    }
+
+    INVENTORY_STOCK_COUNT_LINES {
+        bigint id PK
+        bigint inventory_stock_count_id FK
+        bigint product_id FK
+        bigint inventory_batch_id FK
+        decimal system_quantity
+        decimal counted_quantity
+        decimal variance_quantity
+    }
+
+    INVENTORY_RESERVATIONS {
+        bigint id PK
+        bigint product_id FK
+        bigint branch_id FK
+        bigint inventory_batch_id FK
+        string source_type
+        bigint source_id
+        decimal quantity
+        string status
+        datetime reserved_at
+        datetime released_at
+        datetime consumed_at
+    }
+
+    INVENTORY_VALUATION_SNAPSHOTS {
+        bigint id PK
+        bigint company_id FK
+        bigint branch_id FK
+        date snapshot_date
+        decimal total_quantity
+        decimal total_cost_value
+        decimal total_retail_value
+    }
+
+    COMPANIES ||--o{ BRANCHES : owns
+    COMPANIES ||--o{ SUPPLIERS : manages
+    COMPANIES ||--o{ PRODUCT_CATEGORIES : defines
+    COMPANIES ||--o{ PRODUCTS : catalogs
+    COMPANIES ||--o{ INVENTORY_PURCHASE_ORDERS : purchases
+    COMPANIES ||--o{ INVENTORY_VALUATION_SNAPSHOTS : values
+    BRANCHES ||--o{ INVENTORY_LOCATIONS : contains
+    BRANCHES ||--o{ INVENTORY_STOCK_LEVELS : holds
+    BRANCHES ||--o{ INVENTORY_STOCK_MOVEMENTS : records
+    BRANCHES ||--o{ INVENTORY_GOODS_RECEIPTS : receives
+    BRANCHES ||--o{ INVENTORY_SUPPLIER_RETURNS : returns
+    BRANCHES ||--o{ INVENTORY_ADJUSTMENTS : adjusts
+    BRANCHES ||--o{ INVENTORY_STOCK_COUNTS : counts
+    SUPPLIERS ||--o{ PRODUCTS : supplies
+    SUPPLIERS ||--o{ INVENTORY_BATCHES : sources
+    SUPPLIERS ||--o{ INVENTORY_PURCHASE_ORDERS : receives
+    SUPPLIERS ||--o{ INVENTORY_GOODS_RECEIPTS : delivers
+    SUPPLIERS ||--o{ INVENTORY_SUPPLIER_RETURNS : accepts
+    PRODUCT_CATEGORIES ||--o{ PRODUCTS : groups
+    PRODUCT_CATEGORIES ||--o{ PRODUCT_CATEGORIES : parent_of
+    PRODUCTS ||--o| INVENTORY_FRAME_DETAILS : has
+    PRODUCTS ||--o| INVENTORY_LENS_DETAILS : has
+    PRODUCTS ||--o| INVENTORY_CONTACT_LENS_DETAILS : has
+    PRODUCTS ||--o{ INVENTORY_PRODUCT_BARCODES : scans_as
+    PRODUCTS ||--o{ INVENTORY_BATCHES : tracked_by
+    PRODUCTS ||--o{ INVENTORY_SERIALS : serialized_as
+    PRODUCTS ||--o{ INVENTORY_STOCK_LEVELS : stocked_as
+    PRODUCTS ||--o{ INVENTORY_STOCK_MOVEMENTS : moves
+    PRODUCTS ||--o{ INVENTORY_PURCHASE_ORDER_LINES : ordered
+    PRODUCTS ||--o{ INVENTORY_GOODS_RECEIPT_LINES : received
+    PRODUCTS ||--o{ INVENTORY_SUPPLIER_RETURN_LINES : returned
+    PRODUCTS ||--o{ INVENTORY_ADJUSTMENT_LINES : adjusted
+    PRODUCTS ||--o{ INVENTORY_TRANSFER_LINES : transferred
+    PRODUCTS ||--o{ INVENTORY_STOCK_COUNT_LINES : counted
+    PRODUCTS ||--o{ INVENTORY_RESERVATIONS : reserved
+    INVENTORY_LOCATIONS ||--o{ INVENTORY_STOCK_LEVELS : stores
+    INVENTORY_LOCATIONS ||--o{ INVENTORY_STOCK_MOVEMENTS : occurs_at
+    INVENTORY_BATCHES ||--o{ INVENTORY_STOCK_LEVELS : splits
+    INVENTORY_BATCHES ||--o{ INVENTORY_STOCK_MOVEMENTS : moves
+    INVENTORY_BATCHES ||--o{ INVENTORY_SERIALS : contains
+    INVENTORY_BATCHES ||--o{ INVENTORY_RESERVATIONS : reserves
+    INVENTORY_SERIALS ||--o{ INVENTORY_STOCK_MOVEMENTS : moves
+    INVENTORY_PURCHASE_ORDERS ||--o{ INVENTORY_PURCHASE_ORDER_LINES : contains
+    INVENTORY_PURCHASE_ORDERS ||--o{ INVENTORY_GOODS_RECEIPTS : receives
+    INVENTORY_PURCHASE_ORDER_LINES ||--o{ INVENTORY_GOODS_RECEIPT_LINES : received_by
+    INVENTORY_GOODS_RECEIPTS ||--o{ INVENTORY_GOODS_RECEIPT_LINES : contains
+    INVENTORY_GOODS_RECEIPT_LINES }o--o| INVENTORY_BATCHES : creates
+    INVENTORY_SUPPLIER_RETURNS ||--o{ INVENTORY_SUPPLIER_RETURN_LINES : contains
+    INVENTORY_ADJUSTMENTS ||--o{ INVENTORY_ADJUSTMENT_LINES : contains
+    INVENTORY_TRANSFERS ||--o{ INVENTORY_TRANSFER_LINES : contains
+    INVENTORY_STOCK_COUNTS ||--o{ INVENTORY_STOCK_COUNT_LINES : contains
+    USERS ||--o{ INVENTORY_STOCK_MOVEMENTS : performs
